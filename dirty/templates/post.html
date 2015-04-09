@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load tags %}
+{% block content %}
+    <article>
+        <p>{{ post.title }}</p>
+        <p>{{ post.description }}</p>
+    </article>
+    <div class="comments-wrapper">
+    <div class="comments">
+        {% if comments %}
+            {% for comment in comments %}
+                {% if comment.isNotChild %}
+                <div class="comment">
+                    <ul>
+                        <li>{% com_tree comment %}</li>
+                    </ul>
+
+                    {% if user.is_authenticated %}
+                        <input type="button" value="Ответить" class="open-comment-form"  onclick="open_comment_form({{ comment.id }}, '{% url 'comment_answer_view' comment.id %}')"/>
+                        <div id="comment{{ comment.id }}"></div>
+                    {% endif %}
+                    <hr />
+                {% endif %}
+            {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+        {% if user.is_authenticated %}
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input type="submit" value="YARR" />
+            </form>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block scripts %}
+
+{% endblock %}

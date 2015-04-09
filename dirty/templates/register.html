@@ -1,0 +1,24 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <link href="{% static 'css/login.css' %}" type="text/css" rel="stylesheet"/>
+    <title></title>
+</head>
+<body>
+
+{% if user.is_authenticated %}
+    <p>Вы уже зарегистрированы.</p>
+{% else %}
+    <form action="." method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+    <input type="submit" value="YARR!" />
+</form>
+{% endif %}
+
+
+
+</body>
+</html>

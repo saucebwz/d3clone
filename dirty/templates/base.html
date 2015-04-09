@@ -1,0 +1,35 @@
+{% load tags %}
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <link href="{% static 'css/styles.css' %}" type="text/css" rel="stylesheet"/>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/scripts.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.cookie.js"></script>
+    <title></title>
+</head>
+<body>
+<header>
+    {% block header %}
+      {% if user.username %}
+            <p><a href="{% url 'newpost_view' %}">Новый пост</a>, <a href="{% url 'profile_view' user.username %}">{{ user.username }}</a>?</p>
+        {% else %}
+            <p><a href="{% url 'login_view' %}">Войдите</a> или <a href="{% url 'register_view' %}">зарегистрируйтесь!</a></p>
+        {% endif %}
+    {% endblock %}
+</header>
+
+<div class="content-container">
+    {% block content %}
+
+    {% endblock %}
+</div>
+
+{% block scripts %}
+
+{% endblock %}
+
+</body>
+</html>

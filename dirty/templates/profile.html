@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <p>{{ about }}</p>
+    <p>
+        {% if isOwn %}
+            <p><a href="{% url 'profile_edit_view' %}"> Изменить профиль...</a></p>
+        {% endif %}
+    </p>
+
+
+{% endblock %}
