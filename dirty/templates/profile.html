@@ -2,12 +2,36 @@
 
 {% block content %}
 
-    <p>{{ about }}</p>
-    <p>
+    <p>{{ user.about }}</p>
+    <div class="karma-wrapper">
+        {% if not isOwn %}<a class="karma-manipulation">-</a>{% endif %}<p>{{ karma }}</p>{% if not isOwn %}<a class="karma-manipulation">+</a>{% endif %}
+    </div>
         {% if isOwn %}
             <p><a href="{% url 'profile_edit_view' %}"> Изменить профиль...</a></p>
         {% endif %}
     </p>
+
+
+    <script type="text/javascript">
+        $('.karma-manipulation').click(function(){
+            var name = "{{ user.username }}";
+            var url = "{% url 'karma_edit_view' 12 %}".replace(12, name);
+            var karma_type = $(this).text();
+            $.ajax({
+                url: url,
+                cache: false,
+                dataType: "json",
+                type: "POST",
+                data: {'karma_type':karma_type},
+                success: function(data){
+                    alert(data.karma);
+                },
+                error: function(data){
+                    alert("error");
+                }
+            })
+        })
+    </script>
 
 
 {% endblock %}

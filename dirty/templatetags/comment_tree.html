@@ -1,11 +1,12 @@
 {% load tags %}
 <p>{{ comment.author }}</p>
 <p>{{ comment.text }}</p>
+
 <ul>
     {% for child in children %}
+        <input type="button" value="Ответить!"  onclick="open_comment_form({{ child.id }}, '{% url 'comment_answer_view' child.id %}')">
         <li>
             {% com_tree child %}
-            <input type="button" value="Ответить!"  onclick="open_comment_form({{ child.id }}, '{% url 'comment_answer_view' child.id %}')">
             <div id="comment{{ child.id }}"></div>
         </li>
     {% endfor %}

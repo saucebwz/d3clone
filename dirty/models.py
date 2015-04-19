@@ -72,6 +72,11 @@ class DirtyUserManager(BaseUserManager):
         return u
 
 
+class Karma(models.Model):
+    karma_user = models.OneToOneField('DirtyUser')
+    count = models.IntegerField(default=0)
+
+
 class DirtyUser(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=40, unique=True)
     first_name = models.CharField(max_length=20, blank=True)
@@ -79,7 +84,6 @@ class DirtyUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=254, unique=True)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
-    about = models.CharField(max_length=500, default="")
 
 
 

@@ -3,17 +3,19 @@ from django.views import generic
 from django.views import generic
 from django.shortcuts import render_to_response
 from django.views.generic import View
-from dirty.models import Post, Like, DirtyUser, Comment
+from dirty.models import Post, Like, DirtyUser, Comment, Karma
 from dirty.forms import PostForm
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from dirty.forms import DirtyUserProfileForm, DirtyUserForm, CommentForm
 from dirty.mixins import LoginRequiredMixin
-from dirty.signals import post_liked
+from dirty.signals import post_liked, karma_inited
+from dirty.templatetags.tags import get_likes_count
+import json
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import Permission, User
 
@@ -36,7 +38,9 @@ class RegisterView(generic.FormView):
     def post(self, request, *args, **kwargs):
         form = DirtyUserForm(request.POST)
         if form.is_valid():
-            form.save()
+            user = form.save(commit=False)
+            karma_inited.send(sender=user)
+            user.save()
             return HttpResponseRedirect(reverse('main_view'))
         else:
             return render_to_response('register.html', {'form': form}, context_instance=RequestContext(request))
@@ -63,32 +67,38 @@ class LoginView(View):
                               context_instance=RequestContext(request))
 
 
-@login_required(login_url=reverse_lazy('login_view'))
+
 def like_the_post(request, post_id):
-    like_int = 1 if request.POST['submit'] == '+' else -1
-    post = get_object_or_404(Post, pk=post_id)
-    post_likes, created = post.like_set.get_or_create(user=request.user)
-    if created:
-        post_likes.like = like_int
-        post_liked.send(sender=post)
-        post_likes.save()
-        return HttpResponseRedirect(reverse('main_view'))
-    if post_likes:
-        if post_likes.like != like_int:
-            post_likes.like = like_int
-            post_liked.send(sender=post)
-            post_likes.save()
-            return HttpResponseRedirect(reverse('main_view'))
-        else:
-            post_likes.like = 0
-            post_liked.send(sender=post)
-            post_likes.save()
-            return HttpResponseRedirect(reverse('main_view'))
+    if request.user.is_authenticated():
+        if request.method == "POST" and request.is_ajax() and request.user.is_authenticated():
+            like_int = 1 if request.POST['submit'] == '+' else -1
+            post = get_object_or_404(Post, pk=post_id)
+            post_likes, created = post.like_set.get_or_create(user=request.user)
+            if created:
+                post_likes.like = like_int
+                post_liked.send(sender=post)
+                post_likes.save()
+                return HttpResponse(get_likes_count(post_id))
+            if post_likes:
+                if post_likes.like != like_int:
+                    post_likes.like = like_int
+                    post_liked.send(sender=post)
+                    post_likes.save()
+                    return HttpResponse(get_likes_count(post_id))
+                else:
+                    post_likes.like = 0
+                    post_liked.send(sender=post)
+                    post_likes.save()
+                    return HttpResponse(get_likes_count(post_id))
+            else:
+                new_like = Like(user=request.user, post=post, like=like_int)
+                post_liked.send(sender=post)
+                new_like.save()
+                return HttpResponse(get_likes_count(post_id))
     else:
-        new_like = Like(user=request.user, post=post, like=like_int)
-        post_liked.send(sender=post)
-        new_like.save()
-        return HttpResponseRedirect(reverse('main_view'))
+        return HttpResponse("not_logged_in")
+
+
 
 
 def logout_view(request):
@@ -109,15 +119,21 @@ class NewPost(generic.FormView):
             return HttpResponseRedirect(reverse('main_view'))
 
 
+def karma_edit(request, profile_name):
+    if request.method == "POST" and request.is_ajax():
+        karma_type = request.POST.get('karma_type')
+        user = get_object_or_404(DirtyUser, username=profile_name)
+        karma = user.karma
+        return HttpResponse(json.dumps({'karma': karma.count}), content_type="application/json")
+
 class ProfileView(LoginRequiredMixin, View):
 
     def get(self, request, profile_name):
         user = get_object_or_404(DirtyUser, username=profile_name)
-        about = user.about
         isOwn = False
         if request.user.username == user.username:
             isOwn = True
-        return render_to_response("profile.html", {'about': about, 'isOwn': isOwn}, context_instance=RequestContext(request))
+        return render_to_response("profile.html", {'user': user, 'isOwn': isOwn, 'karma': user.karma.count}, context_instance=RequestContext(request))
 
 
 class ProfileEdit(LoginRequiredMixin, generic.FormView):
@@ -171,3 +187,22 @@ def answer_comment(request, comment_id):
     new_comment = Comment(post=comment.post, parent=comment, author=request.user, text=comment_text, isNotChild=False)
     new_comment.save()
     return HttpResponseRedirect(reverse("post_view", args=(comment.post.id, )))
+
+class ChangePassword(LoginRequiredMixin, View):
+    login_url = '/accounts/login/'
+
+    def get(self, request):
+        return render_to_response('change_password.html', {}, context_instance=RequestContext(request))
+
+    def post(self, request):
+        postdata = request.POST.copy()
+        oldpassword = postdata['oldpassword']
+        newpassword = postdata['newpassword']
+        newpassword_repeat = postdata['newpassword_repeat']
+        if request.user.check_password(oldpassword[0]):
+            return render_to_response("change_password.html", {'errors': 'Неверно ввели старый пароль!'}, context_instance=RequestContext(request))
+        if newpassword != newpassword_repeat:
+            return render_to_response("change_password.html", {'errors': 'Введённые пароли не совпадают!'}, context_instance=RequestContext(request))
+        request.user.set_password(newpassword)
+        request.user.save()
+        return HttpResponseRedirect(reverse('login_view'))

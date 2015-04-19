@@ -99,6 +99,8 @@ TEMPLATE_DIRS = (
     os.path.join(BASE_DIR, 'dirty/templatetags')
 )
 
+SITE_URL = '127.0.0.1:8000'
+
 TEMPLATE_CONTEXT_PROCESSORS = ("django.contrib.auth.context_processors.auth",
                                "django.core.context_processors.debug",
                                "django.core.context_processors.i18n",

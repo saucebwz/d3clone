@@ -1,4 +1,5 @@
 
+
 function open_comment_form(id, path){
     var csrftoken = $.cookie('csrftoken');
     var div = $("#comment"+id);
@@ -9,3 +10,4 @@ function open_comment_form(id, path){
     post.append("<br><input type='submit' value = 'Комментировать' />");
     post.append("</form>");
 }
+

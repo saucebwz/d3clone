@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <p><a href="{% url 'password_edit_view' %}">Изменить пароль</a></p>
     <form action="." method="post">
         {% csrf_token %}
         {{ form.as_p }}

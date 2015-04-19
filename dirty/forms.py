@@ -5,6 +5,9 @@ from registration.models import RegistrationProfile
 from registration.forms import RegistrationForm
 from dirty.models import DirtyUser
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
+from d3clone import settings
+from django.contrib.sites.models import Site
+
 
 
 class PostForm(forms.ModelForm):
@@ -18,6 +21,8 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ('text', )
+
+
 
 """
 class UserForm(forms.ModelForm):
@@ -66,7 +71,7 @@ class DirtyUserForm(forms.ModelForm):
         new_user = RegistrationProfile.objects.create_inactive_user(username=self.cleaned_data['username'],
                                                                     password=self.cleaned_data['password2'],
                                                                     email=self.cleaned_data['email'],
-                                                                    site=None)
+                                                                    site=Site)
         new_user.first_name = self.cleaned_data['first_name']
         new_user.second_name = self.cleaned_data['second_name']
         if commit:

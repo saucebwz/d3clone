@@ -1,7 +1,8 @@
 from django.contrib import admin
-from dirty.models import Post, Comment, Like, DirtyUser
+from dirty.models import Post, Comment, Like, DirtyUser, Karma
 from dirty.forms import DirtyChangeForm, DirtyUserForm
 from django.contrib.auth.admin import UserAdmin
+
 
 
 class LikeInline(admin.TabularInline):
@@ -36,7 +37,7 @@ class DirtyUserAdmin(UserAdmin):
     add_form = DirtyUserForm
     fieldsets = (
         (None, {'fields': ('email', 'password', 'username')}),
-        ('Personal info', {'fields': ('first_name', 'second_name', 'about')}),
+        ('Personal info', {'fields': ('first_name', 'second_name')}),
         ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser')}),
         ('Important dates', {'fields': ('date_joined',)}),
     )
@@ -56,4 +57,5 @@ class DirtyUserAdmin(UserAdmin):
 
 admin.site.register(Post, PostAdmin)
 admin.site.register(DirtyUser, DirtyUserAdmin)
+admin.site.register(Karma)
 #admin.site.register(Profile, ProfileAdmin)

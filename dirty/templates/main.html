@@ -7,12 +7,14 @@
     {% for item in list_popular_posts %}
         <p><a href="{% url "post_view" item.id %}">{{ item.title }}</a></p>
         <p>{{ item.description|truncatechars:400 }}</p>
-        <p>{% get_likes_count item.id %}</p>
-        <form action="{% url 'like_view' item.id %}" method="post">
+        <p id="likes_post{{ item.id }}">{% get_likes_count item.id %}</p>
+     <!--   <form action="{% url 'like_view' item.id %}" method="post"> -->
             {% csrf_token %}
-            <input type="submit" value="+" name="submit" />
-            <input type="submit" value="-" name="submit" />
-        </form>
+        <div class="rate_block{{ item.id }}">
+            <input type="submit" value="+" name="submit" class="like_click" id="{{ item.id }}"/>
+            <input type="submit" value="-" name="submit" class="like_click" id="{{ item.id }}"/>
+        </div>
+       <!--   </form> -->
     {% endfor %}
     <a href="{% url 'logout_view' %}">logout</a>
 {% endblock %}
