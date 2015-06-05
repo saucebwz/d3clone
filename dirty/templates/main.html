@@ -5,16 +5,24 @@
         {{ error }}
     {% endif %}
     {% for item in list_popular_posts %}
-        <p><a href="{% url "post_view" item.id %}">{{ item.title }}</a></p>
-        <p>{{ item.description|truncatechars:400 }}</p>
-        <p id="likes_post{{ item.id }}">{% get_likes_count item.id %}</p>
-     <!--   <form action="{% url 'like_view' item.id %}" method="post"> -->
+        <div class="post">
+            <div class="post-header">
+                <h3><a href="{% url "post_view" item.id %}">{{ item.title }}</a></h3>
+            </div>
+            <div class="post-body">
+                <p>{{ item.description|truncatechars:400 }}</p>
+            </div>
+            <p id="likes_post{{ item.id }}">{% get_likes_count item.id %}</p>
             {% csrf_token %}
-        <div class="rate_block{{ item.id }}">
-            <input type="submit" value="+" name="submit" class="like_click" id="{{ item.id }}"/>
-            <input type="submit" value="-" name="submit" class="like_click" id="{{ item.id }}"/>
+            <div class="rate_block{{ item.id }}">
+                <input type="submit" value="+" name="submit" class="like_click" id="{{ item.id }}"/>
+                <input type="submit" value="-" name="submit" class="like_click" id="{{ item.id }}"/>
+            </div>
         </div>
-       <!--   </form> -->
+        <div class="post-info">
+            Написал <a href="{% url 'profile_view' item.user.username %}">{{ item.user.username }}</a> в
+            {{ item.created_on }}, {% get_comments_count item.id %}
+        </div>
     {% endfor %}
     <a href="{% url 'logout_view' %}">logout</a>
 {% endblock %}

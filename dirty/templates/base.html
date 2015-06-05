@@ -2,89 +2,99 @@
 {% load staticfiles %}
 <!DOCTYPE html>
 <html>
-<head lang="en">
-    <meta charset="UTF-8">
-    <link href="{% static 'css/styles.css' %}" type="text/css" rel="stylesheet"/>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-1.11.2.min.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/scripts.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.cookie.js"></script>
-    <title></title>
-</head>
-<body>
-<header>
-    {% block header %}
-      {% if user.username %}
-            <p><a href="{% url 'newpost_view' %}">Новый пост</a>, <a href="{% url 'profile_view' user.username %}">{{ user.username }}</a>?</p>
-        {% else %}
-            <p><a href="{% url 'login_view' %}">Войдите</a> или <a href="{% url 'register_view' %}">зарегистрируйтесь!</a></p>
-        {% endif %}
-    {% endblock %}
-</header>
+    <head lang="en">
+        <meta charset="UTF-8">
+        <link href="{% static 'css/styles.css' %}" type="text/css" rel="stylesheet"/>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-1.11.2.min.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/scripts.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.cookie.js"></script>
+        <title></title>
+    </head>
+    <body>
+        <header>
+            <div class="header-tagline">
+                {% block header %}
+                    {% if user.username %}
+                        <p><a href="{% url 'newpost_view' %}">Новый пост</a>, <a href="{% url 'profile_view' user.username %}">{{ user.username }}</a>?</p>
+                    {% else %}
+                        <p><a href="{% url 'login_view' %}">Войдите</a> или <a href="{% url 'register_view' %}">зарегистрируйтесь!</a></p>
+                    {% endif %}
+                {% endblock %}
+            </div>
+            <nav class="header-navbar">
+                <a>Мои вещи</a>
+                <a>Инбоксы</a>
+                <a>Избранное</a>
+                <a href="{% url 'profile_edit_view' %}">Настройки</a>
+            </nav>
+        </header>
 
-<div class="content-container">
-    {% block content %}
+        <div class="content-main-container">
+            <div class="post-holder"></div>
+                {% block content %}
 
-    {% endblock %}
-</div>
+                {% endblock %}
+            <div></div>
+        </div>
 
-{% block scripts %}
-<script type="text/javascript">
-$( document ).ready(function() {
-    function getCookie(name) {
-    var cookieValue = null;
-    if (document.cookie && document.cookie != '') {
-        var cookies = document.cookie.split(';');
-        for (var i = 0; i < cookies.length; i++) {
-            var cookie = jQuery.trim(cookies[i]);
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) == (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
-var csrftoken = getCookie('csrftoken');
-
-function csrfSafeMethod(method) {
-    // these HTTP methods do not require CSRF protection
-    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-}
-
-$.ajaxSetup({
-    beforeSend: function(xhr, settings) {
-        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-            xhr.setRequestHeader("X-CSRFToken", csrftoken);
-        }
-    }
-});
-    $(".like_click").click(function(){
-
-        var id = $(this).attr('id');
-        var url = "{% url 'like_view' 12 %}".replace(12, id);
-        var login_url = "{% url 'login_view' %}";
-        var register_url = "{% url 'register_view' %}";
-        var submit = $(this).attr('value');
-        $.ajax({
-            url: url,
-            type: "POST",
-            data: {'submit': submit},
-            success: function(data){
-                if(data == "not_logged_in"){
-                    $("#login_required").remove();
-                    $(".rate_block"+id).append("<span id='login_required'><a href='"+login_url+"'>Войдите</a> или <a href='"+register_url+"'>зарегистрируйтесь</a>!</span>");
+        {% block scripts %}
+        <script type="text/javascript">
+        $( document ).ready(function() {
+            function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie != '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
                 }
-                else{
-                    $("#likes_post"+id).text(data);
-                }
-
             }
-        })
-    })
-});
-</script>
-{% endblock %}
+            return cookieValue;
+        }
+        var csrftoken = getCookie('csrftoken');
 
-</body>
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+            $(".like_click").click(function(){
+
+                var id = $(this).attr('id');
+                var url = "{% url 'like_view' 12 %}".replace(12, id);
+                var login_url = "{% url 'login_view' %}";
+                var register_url = "{% url 'register_view' %}";
+                var submit = $(this).attr('value');
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    data: {'submit': submit},
+                    success: function(data){
+                        if(data == "not_logged_in"){
+                            $("#login_required").remove();
+                            $(".rate_block"+id).append("<span id='login_required'><a href='"+login_url+"'>Войдите</a> или <a href='"+register_url+"'>зарегистрируйтесь</a>!</span>");
+                        }
+                        else{
+                            $("#likes_post"+id).text(data);
+                        }
+
+                    }
+                })
+            })
+        });
+        </script>
+        {% endblock %}
+
+    </body>
 </html>

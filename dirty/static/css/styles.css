@@ -4,3 +4,29 @@ post.html
 .comment-form-wrapper{
     display: none;
 }
+
+header{
+    overflow: auto;
+    font-size: 13px;
+
+}
+
+.header-tagline{
+    float: left;
+}
+
+.header-navbar{
+    overflow: auto;
+}
+
+.header-navbar a{
+    display: inline-block;
+    font-size: 13px;
+    margin-left: 50px;
+    margin-top: 14px;
+    color: #556e8c;
+}
+
+.header-navbar a:first-child{
+    margin-left: 100px;
+}

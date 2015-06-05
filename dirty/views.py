@@ -3,7 +3,7 @@ from django.views import generic
 from django.views import generic
 from django.shortcuts import render_to_response
 from django.views.generic import View
-from dirty.models import Post, Like, DirtyUser, Comment, Karma
+from dirty.models import Post, Like, DirtyUser, Comment, Karma, KarmaWVL
 from dirty.forms import PostForm
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.contrib.auth import authenticate, login, logout
@@ -16,6 +16,8 @@ from dirty.mixins import LoginRequiredMixin
 from dirty.signals import post_liked, karma_inited
 from dirty.templatetags.tags import get_likes_count
 import json
+from django.contrib.sites.shortcuts import get_current_site
+
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import Permission, User
 
@@ -36,7 +38,7 @@ class RegisterView(generic.FormView):
     form_class = DirtyUserForm
 
     def post(self, request, *args, **kwargs):
-        form = DirtyUserForm(request.POST)
+        form = DirtyUserForm(request.POST, request=request)
         if form.is_valid():
             user = form.save(commit=False)
             karma_inited.send(sender=user)
@@ -119,12 +121,42 @@ class NewPost(generic.FormView):
             return HttpResponseRedirect(reverse('main_view'))
 
 
+def defineOperator(karma, operator):
+    if karma is not -2 and karma is not 2:
+        return True
+
+    op = '+' if karma == -2 else ''
+
+    if karma == 2:
+        op = '-'
+    print(operator, ' ', op)
+    return operator == op
+
+
 def karma_edit(request, profile_name):
     if request.method == "POST" and request.is_ajax():
-        karma_type = request.POST.get('karma_type')
+        karma_type = 1 if request.POST.get('karma_type') == '+' else -1
         user = get_object_or_404(DirtyUser, username=profile_name)
-        karma = user.karma
-        return HttpResponse(json.dumps({'karma': karma.count}), content_type="application/json")
+        #Init or get karma object
+
+        vote_info, created = KarmaWVL.objects.get_or_create(who_added=request.user)
+        if created:#Do work if only created or in range of karma
+            user.karma.count += karma_type
+            vote_info.count += karma_type
+            user.karma.save()
+            vote_info.save()
+            return HttpResponse(user.karma.count)
+        else:
+            if defineOperator(vote_info.count, request.POST.get('karma_type')):
+                user.karma.count += karma_type
+                vote_info.count += karma_type
+                user.karma.save()
+                vote_info.save()
+                return HttpResponse(user.karma.count)
+            else:
+                return HttpResponse("error")
+
+        #return HttpResponse(json.dumps({'karma': user.karma.count}), content_type="application/json")
 
 class ProfileView(LoginRequiredMixin, View):
 

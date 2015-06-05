@@ -6,8 +6,7 @@ from registration.forms import RegistrationForm
 from dirty.models import DirtyUser
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from d3clone import settings
-from django.contrib.sites.models import Site
-
+from django.contrib.sites.shortcuts import get_current_site
 
 
 class PostForm(forms.ModelForm):
@@ -55,6 +54,10 @@ class DirtyUserForm(forms.ModelForm):
     first_name = forms.CharField(label="Имя")
     second_name = forms.CharField(label="Фамилия")
 
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super(DirtyUserForm, self).__init__(*args, **kwargs)
+        
     class Meta:
         model = DirtyUser
         fields = ('username', 'email', 'first_name', 'second_name', )
@@ -71,7 +74,7 @@ class DirtyUserForm(forms.ModelForm):
         new_user = RegistrationProfile.objects.create_inactive_user(username=self.cleaned_data['username'],
                                                                     password=self.cleaned_data['password2'],
                                                                     email=self.cleaned_data['email'],
-                                                                    site=Site)
+                                                                    site=get_current_site(self.request))
         new_user.first_name = self.cleaned_data['first_name']
         new_user.second_name = self.cleaned_data['second_name']
         if commit:

@@ -12,7 +12,7 @@ class Post(models.Model):
     user = models.ForeignKey('DirtyUser')
     title = models.CharField(default="", max_length=100)
     description = models.TextField(default="")
-    created_on = models.DateField(auto_now_add=True, default=timezone.now())
+    created_on = models.DateField(auto_now_add=True)
     is_gold = models.BooleanField(default=False)
 
     def __str__(self):
@@ -27,7 +27,7 @@ class Comment(models.Model):
     parent = models.ForeignKey('self', related_name='children', null=True, blank=True)
     author = models.ForeignKey('DirtyUser')
     text = models.CharField(default="", null=True, blank=True, max_length=1000)
-    created_on = models.DateField(auto_now_add=True, default=timezone.now())
+    created_on = models.DateField(auto_now_add=True)
     isNotChild = models.BooleanField(default=True)
 
 
@@ -72,8 +72,14 @@ class DirtyUserManager(BaseUserManager):
         return u
 
 
+class KarmaWVL(models.Model):
+    who_added = models.ForeignKey('DirtyUser')
+    count = models.IntegerField(default=0)
+
+
 class Karma(models.Model):
     karma_user = models.OneToOneField('DirtyUser')
+    voted = models.ForeignKey('KarmaWVL', related_name='voted_users', null=True)
     count = models.IntegerField(default=0)
 
 
@@ -84,10 +90,11 @@ class DirtyUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=254, unique=True)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
+    about = models.CharField(blank=True, max_length=1500)
 
 
 
-    date_joined = models.DateTimeField(default=timezone.now())
+    date_joined = models.DateTimeField(auto_now_add=True)
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']
     objects = DirtyUserManager()

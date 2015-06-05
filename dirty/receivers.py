@@ -5,6 +5,7 @@ from dirty.signals import post_liked, karma_inited
 from dirty.models import DirtyUser, Karma
 from django.shortcuts import get_object_or_404
 
+
 @receiver(post_liked)
 def handle_post_viewed(sender, **kwargs):
     post = sender
@@ -13,7 +14,8 @@ def handle_post_viewed(sender, **kwargs):
         post.is_gold = True
     post.save()
 
+
 @receiver(karma_inited)
 def init_karma(sender, **kwargs):
-    karma = Karma(user=sender, count=0)
+    karma = Karma(karma_user=sender, count=0)
     karma.save()

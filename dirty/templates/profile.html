@@ -4,7 +4,7 @@
 
     <p>{{ user.about }}</p>
     <div class="karma-wrapper">
-        {% if not isOwn %}<a class="karma-manipulation">-</a>{% endif %}<p>{{ karma }}</p>{% if not isOwn %}<a class="karma-manipulation">+</a>{% endif %}
+        {% if not isOwn %}<a class="karma-manipulation">-</a>{% endif %}<p id="karma-info">{{ karma }}</p>{% if not isOwn %}<a class="karma-manipulation">+</a>{% endif %}
     </div>
         {% if isOwn %}
             <p><a href="{% url 'profile_edit_view' %}"> Изменить профиль...</a></p>
@@ -19,15 +19,15 @@
             var karma_type = $(this).text();
             $.ajax({
                 url: url,
-                cache: false,
-                dataType: "json",
                 type: "POST",
                 data: {'karma_type':karma_type},
                 success: function(data){
-                    alert(data.karma);
+                    if(data !== "error"){
+                            $('#karma-info').text(data);
+                    }
                 },
                 error: function(data){
-                    alert("error");
+                    console.log(data);
                 }
             })
         })
