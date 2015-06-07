@@ -28,6 +28,7 @@ class MainView(generic.ListView):
     model = Post
     template_name = "main.html"
     context_object_name = "list_popular_posts"
+    paginate_by = 10
 
     def get_queryset(self):
         return Post.objects.all()
@@ -141,6 +142,7 @@ def karma_edit(request, profile_name):
 
         vote_info, created = KarmaWVL.objects.get_or_create(who_added=request.user)
         if created:#Do work if only created or in range of karma
+            user.karma.voted_users.add(vote_info)
             user.karma.count += karma_type
             vote_info.count += karma_type
             user.karma.save()
@@ -165,7 +167,7 @@ class ProfileView(LoginRequiredMixin, View):
         isOwn = False
         if request.user.username == user.username:
             isOwn = True
-        return render_to_response("profile.html", {'user': user, 'isOwn': isOwn, 'karma': user.karma.count}, context_instance=RequestContext(request))
+        return render_to_response("profile.html", {'u': user, 'isOwn': isOwn, 'karma': user.karma.count}, context_instance=RequestContext(request))
 
 
 class ProfileEdit(LoginRequiredMixin, generic.FormView):
@@ -216,7 +218,7 @@ def answer_comment(request, comment_id):
     comment = get_object_or_404(Comment, pk=comment_id)
     postdata = request.POST.copy()
     comment_text = postdata['comment-text']
-    new_comment = Comment(post=comment.post, parent=comment, author=request.user, text=comment_text, isNotChild=False)
+    new_comment = Comment(post=comment.post, parent=comment, author=request.user, text=comment_text, isNotChild=False, head=comment.head+1)
     new_comment.save()
     return HttpResponseRedirect(reverse("post_view", args=(comment.post.id, )))
 

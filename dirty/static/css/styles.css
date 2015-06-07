@@ -1,9 +1,29 @@
+body{
+    font-family: Arial, Helvetica, sans-serif;
+}
 /*
 post.html
 */
 .comment-form-wrapper{
     display: none;
 }
+.post-wrapper{
+    margin-bottom: 50px;
+}
+.post-info{
+    color: #888;
+    font-size: 14px;
+}
+/*
+END
+*/
+
+/* PAGINATOR STYLES */
+.paginator{
+    margin-top: 10px;
+}
+
+/* END */
 
 header{
     overflow: auto;
@@ -27,6 +47,42 @@ header{
     color: #556e8c;
 }
 
+.header-tagline a{
+    color: #556E8C;
+}
+
+.header-tagline a:visited{
+    color: #556E8C;
+}
+
+.d3logo{
+    float: left;
+    width: 57px;
+    height: 57px;
+    margin-right: 20px;
+}
+
+
+
 .header-navbar a:first-child{
     margin-left: 100px;
 }
+
+/*
+Content Styles
+*/
+.content-sidebar{
+    float:right;
+    margin-right: 100px;
+}
+
+.post-holder{
+    padding-left: 165px;
+}
+
+.post-header a{
+    text-decoration: none;
+    color: #4E729D;
+}
+
+/*POST STYLES*/

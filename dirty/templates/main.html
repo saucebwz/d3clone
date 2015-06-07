@@ -20,9 +20,24 @@
             </div>
         </div>
         <div class="post-info">
-            Написал <a href="{% url 'profile_view' item.user.username %}">{{ item.user.username }}</a> в
-            {{ item.created_on }}, {% get_comments_count item.id %}
+            {% get_full_info_about_post item.id %}
         </div>
     {% endfor %}
-    <a href="{% url 'logout_view' %}">logout</a>
+        {% if is_paginated %}
+            <div class="paginator">
+                {% if page_obj.has_previous  %}
+                    <a href="{% url 'main_view' %}?page={{ page_obj.previous_page_number }}">Previous</a>
+                {% endif %}
+                {% for pag in page_obj.paginator.page_range %}
+                    {% ifequal pag page_obj.number %}
+                        {{ pag }}
+                    {% else %}
+                        <a href="{% url 'main_view' %}?page={{ pag }}">{{ pag }}</a>
+                    {% endifequal %}
+                {% endfor %}
+                {% if page_obj.has_next %}
+                    <a href="{% url 'main_view' %}?page={{ page_obj.next_page_number }}">Next</a>
+                {% endif %}
+            </div>
+        {% endif %}
 {% endblock %}

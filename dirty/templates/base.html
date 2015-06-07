@@ -12,6 +12,7 @@
     </head>
     <body>
         <header>
+            <a href="{% url 'main_view' %}"><img class="d3logo" src="https://d3.ru/static/i/logo_main_retina.png"/></a>
             <div class="header-tagline">
                 {% block header %}
                     {% if user.username %}
@@ -28,13 +29,15 @@
                 <a href="{% url 'profile_edit_view' %}">Настройки</a>
             </nav>
         </header>
+        <div class="clearfix"></div>
 
         <div class="content-main-container">
-            <div class="post-holder"></div>
+            <aside class="content-sidebar">test</aside>
+            <div class="post-holder">
                 {% block content %}
 
                 {% endblock %}
-            <div></div>
+            </div>
         </div>
 
         {% block scripts %}

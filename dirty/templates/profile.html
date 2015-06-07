@@ -2,7 +2,7 @@
 
 {% block content %}
 
-    <p>{{ user.about }}</p>
+    <p>{{ u.about }}</p>
     <div class="karma-wrapper">
         {% if not isOwn %}<a class="karma-manipulation">-</a>{% endif %}<p id="karma-info">{{ karma }}</p>{% if not isOwn %}<a class="karma-manipulation">+</a>{% endif %}
     </div>
@@ -14,7 +14,7 @@
 
     <script type="text/javascript">
         $('.karma-manipulation').click(function(){
-            var name = "{{ user.username }}";
+            var name = "{{ u.username }}";
             var url = "{% url 'karma_edit_view' 12 %}".replace(12, name);
             var karma_type = $(this).text();
             $.ajax({

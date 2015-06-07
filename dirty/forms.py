@@ -10,6 +10,12 @@ from django.contrib.sites.shortcuts import get_current_site
 
 
 class PostForm(forms.ModelForm):
+    title = forms.CharField(label='', widget=forms.TextInput(attrs={
+        'placeholder': 'Заголовок'
+    }))
+    description = forms.CharField(label=u'', widget=forms.Textarea(attrs={
+        'placeholder': 'Текст'
+    }))
     class Meta:
         model = Post
         fields = ('title', 'description')

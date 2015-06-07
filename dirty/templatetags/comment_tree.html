@@ -2,13 +2,20 @@
 <p>{{ comment.author }}</p>
 <p>{{ comment.text }}</p>
 
-<ul>
     {% for child in children %}
         <input type="button" value="Ответить!"  onclick="open_comment_form({{ child.id }}, '{% url 'comment_answer_view' child.id %}')">
-        <li>
+        {% if child.head > 1%}
             {% com_tree child %}
             <div id="comment{{ child.id }}"></div>
-        </li>
+        {% else %}
+            <ul>
+            <li>
+            {% com_tree child %}
+                <div id="comment{{ child.id }}"></div>
+            </li>
+            </ul>
+        {% endif %}
+
     {% endfor %}
-</ul>
+
 

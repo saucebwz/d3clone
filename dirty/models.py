@@ -29,6 +29,7 @@ class Comment(models.Model):
     text = models.CharField(default="", null=True, blank=True, max_length=1000)
     created_on = models.DateField(auto_now_add=True)
     isNotChild = models.BooleanField(default=True)
+    head = models.IntegerField(default=0)
 
 
 
@@ -75,11 +76,11 @@ class DirtyUserManager(BaseUserManager):
 class KarmaWVL(models.Model):
     who_added = models.ForeignKey('DirtyUser')
     count = models.IntegerField(default=0)
+    voted = models.ForeignKey('Karma', related_name='voted_users', null=True)
 
 
 class Karma(models.Model):
     karma_user = models.OneToOneField('DirtyUser')
-    voted = models.ForeignKey('KarmaWVL', related_name='voted_users', null=True)
     count = models.IntegerField(default=0)
 
 
