@@ -1,15 +1,18 @@
 from django import template
-from dirty.models import Comment, Post
+from dirty.models import Comment, Post, Like
 from django.shortcuts import get_object_or_404
 from django.core.urlresolvers import reverse
+from django.db.models import Sum
 register = template.Library()
+
 
 @register.simple_tag
 def get_likes_count(post_id):
-    post = get_object_or_404(Post, pk=post_id)
-    likes = post.like_set.filter(like=1).count()
-    dislikes = post.like_set.filter(like=-1).count()
-    result = likes - dislikes
+    likes = Like.objects.filter(post__id=post_id)
+    #post = get_object_or_404(Post, pk=post_id)
+    positive_likes = likes.filter(like=1).count()
+    dislikes = likes.filter(like=-1).count()
+    result = positive_likes - dislikes
     return str(result)
 
 @register.inclusion_tag('comment_tree.html')

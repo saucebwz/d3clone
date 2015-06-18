@@ -3,7 +3,7 @@ from django.views import generic
 from django.views import generic
 from django.shortcuts import render_to_response
 from django.views.generic import View
-from dirty.models import Post, Like, DirtyUser, Comment, Karma, KarmaWVL
+from dirty.models import Post, Like, DirtyUser, Comment, Karma, KarmaWVL, Favorites
 from dirty.forms import PostForm
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.contrib.auth import authenticate, login, logout
@@ -33,6 +33,14 @@ class MainView(generic.ListView):
     def get_queryset(self):
         return Post.objects.all()
 
+class PopularView(generic.ListView):
+    model = Post
+    template_name = "popularposts.html"
+    context_object_name = "list_popular_posts"
+    paginate_by = 10
+
+    def get_queryset(self):
+        return Like.popular_posts.all()
 
 class RegisterView(generic.FormView):
     template_name = "register.html"
@@ -76,7 +84,7 @@ def like_the_post(request, post_id):
         if request.method == "POST" and request.is_ajax() and request.user.is_authenticated():
             like_int = 1 if request.POST['submit'] == '+' else -1
             post = get_object_or_404(Post, pk=post_id)
-            post_likes, created = post.like_set.get_or_create(user=request.user)
+            post_likes, created = post.likes.get_or_create(user=request.user)
             if created:
                 post_likes.like = like_int
                 post_liked.send(sender=post)
@@ -240,3 +248,23 @@ class ChangePassword(LoginRequiredMixin, View):
         request.user.set_password(newpassword)
         request.user.save()
         return HttpResponseRedirect(reverse('login_view'))
+
+def add_favorite(request, post_id):
+    if request.method == "POST" and request.is_ajax():
+        favorite, create = Favorites.objects.get_or_create(post=Post.objects.get(pk=post_id), user=request.user)
+        if create:
+            favorite.save()
+            return HttpResponse("OK!")
+        else:
+            return HttpResponse("error")
+    else:
+        return HttpResponse("check for some shit for tasties")
+
+
+class FavoriteListView(generic.ListView):
+    model = Post
+    paginate_by = 10
+    context_object_name = "list_of_favorites"
+
+    # def get_queryset(self):
+    #     return Favorites.objects.filter(user=self.request.user, )

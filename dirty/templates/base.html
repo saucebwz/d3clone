@@ -94,7 +94,23 @@
 
                     }
                 })
-            })
+            });
+            $('.add-favorite').on('click', function(){
+                var id = $(this).data('postid');
+                var url = "{% url 'favorite_add_view' 12 %}".replace(12, id);
+                 $.ajax({
+                    url: url,
+                    type: "POST",
+                    success: function(data){
+                        if(data !== "error"){
+                            alert("Successfully added to the favorite list");
+                        }
+                        else{
+                            alert("fix me");
+                        }
+                    }
+                })
+            });
         });
         </script>
         {% endblock %}

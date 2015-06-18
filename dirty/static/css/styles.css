@@ -25,6 +25,8 @@ END
 
 /* END */
 
+
+/* base.html header styles */
 header{
     overflow: auto;
     font-size: 13px;
@@ -45,6 +47,11 @@ header{
     margin-left: 50px;
     margin-top: 14px;
     color: #556e8c;
+    text-decoration: none;
+    cursor: pointer;
+}
+.header-navbar a:hover{
+    text-decoration: underline;
 }
 
 .header-tagline a{
@@ -68,6 +75,8 @@ header{
     margin-left: 100px;
 }
 
+/*end header styles*/
+
 /*
 Content Styles
 */
@@ -86,3 +95,15 @@ Content Styles
 }
 
 /*POST STYLES*/
+
+.category{
+    background-color: #556E8C;
+    color: #FFF;
+    text-decoration: none;
+    text-transform: uppercase;
+    padding: 1px 4px;
+    font-size: 13px;
+    border-radius: 2px;
+    font-family: Verdana, sans-serif;
+    line-height: 1.5;
+}

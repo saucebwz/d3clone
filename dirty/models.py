@@ -3,10 +3,14 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.contrib.auth.models import UserManager
-
+from django.db.models import Count
 from django.shortcuts import get_object_or_404
 
-
+class PopularPostManager(models.Manager):
+    def get_queryset(self):
+        query_set = super(PopularPostManager, self).get_queryset()
+        posts = Post.objects.annotate(num=Count('likes__like')).order_by('-num')
+        return posts
 
 class Post(models.Model):
     user = models.ForeignKey('DirtyUser')
@@ -38,9 +42,11 @@ class Comment(models.Model):
 
 
 class Like(models.Model):
-    post = models.ForeignKey(Post, default=0)
+    post = models.ForeignKey(Post, related_name='likes', default=0)
     user = models.ForeignKey('DirtyUser')
     like = models.IntegerField(default=0)
+    objects = models.Manager()
+    popular_posts = PopularPostManager()
 
     def __str__(self):
         return "{0} is liked or disliked {1}".format(self.user.username, self.post.title)
@@ -71,6 +77,11 @@ class DirtyUserManager(BaseUserManager):
         u.is_staff = True
         u.save(using=self._db)
         return u
+
+
+class Favorites(models.Model):
+    post = models.ForeignKey('Post', related_name='favorites')
+    user = models.ForeignKey('DirtyUser')
 
 
 class KarmaWVL(models.Model):
