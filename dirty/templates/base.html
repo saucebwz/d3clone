@@ -25,7 +25,7 @@
             <nav class="header-navbar">
                 <a>Мои вещи</a>
                 <a>Инбоксы</a>
-                <a>Избранное</a>
+                <a href="{% url 'favourite_view' %}">Избранное</a>
                 <a href="{% url 'profile_edit_view' %}">Настройки</a>
             </nav>
         </header>
@@ -96,17 +96,18 @@
                 })
             });
             $('.add-favorite').on('click', function(){
+                var self = $(this);
                 var id = $(this).data('postid');
                 var url = "{% url 'favorite_add_view' 12 %}".replace(12, id);
                  $.ajax({
                     url: url,
                     type: "POST",
                     success: function(data){
-                        if(data !== "error"){
-                            alert("Successfully added to the favorite list");
+                        if(data === '_add'){
+                            self.css('font-weight', 'bold')
                         }
                         else{
-                            alert("fix me");
+                            self.css('font-weight', '400')
                         }
                     }
                 })

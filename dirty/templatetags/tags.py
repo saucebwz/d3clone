@@ -1,5 +1,5 @@
 from django import template
-from dirty.models import Comment, Post, Like
+from dirty.models import Comment, Post, Like, Favorites
 from django.shortcuts import get_object_or_404
 from django.core.urlresolvers import reverse
 from django.db.models import Sum
@@ -15,10 +15,26 @@ def get_likes_count(post_id):
     result = positive_likes - dislikes
     return str(result)
 
+
+@register.simple_tag
+def is_favourite(post_id, user):
+
+    if Favorites.objects.filter(user=user, post__pk=post_id).exists():
+        return "<b>***</b>"
+    else:
+        return "***"
+
+
 @register.inclusion_tag('comment_tree.html')
 def com_tree(comment):
     children = Comment.objects.filter(parent=comment)
     return {'comment': comment, 'children': children}
+
+
+@register.inclusion_tag('build_post.html')
+def build_post(post_id, user):
+    _p = get_object_or_404(Post, pk=post_id)
+    return {'item': _p, 'user': user}
 
 
 @register.simple_tag

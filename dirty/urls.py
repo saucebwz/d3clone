@@ -17,6 +17,7 @@ urlpatterns = patterns('',
     url(r'^profile/my/amnesia/$', views.ChangePassword.as_view(), name="password_edit_view"),
     url(r'karma/edit/(?P<profile_name>[a-zA-Z1-9]+)', views.karma_edit, name="karma_edit_view"),
     url(r'^comments/(?P<post_id>\d+)', views.PostView.as_view(), name="post_view"),
+    url(r'^favourites/$', views.FavoriteListView.as_view(), name="favourite_view"),
     url(r'^favorite/add/(?P<post_id>\d+)', views.add_favorite, name="favorite_add_view"),
     url(r'^accounts/', include('registration.backends.default.urls')),
 

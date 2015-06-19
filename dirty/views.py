@@ -254,9 +254,10 @@ def add_favorite(request, post_id):
         favorite, create = Favorites.objects.get_or_create(post=Post.objects.get(pk=post_id), user=request.user)
         if create:
             favorite.save()
-            return HttpResponse("OK!")
+            return HttpResponse("_add")
         else:
-            return HttpResponse("error")
+            favorite.delete()
+            return HttpResponse("_del")
     else:
         return HttpResponse("check for some shit for tasties")
 
@@ -265,6 +266,7 @@ class FavoriteListView(generic.ListView):
     model = Post
     paginate_by = 10
     context_object_name = "list_of_favorites"
+    template_name = "favorites.html"
 
-    # def get_queryset(self):
-    #     return Favorites.objects.filter(user=self.request.user, )
+    def get_queryset(self):
+        return Favorites.objects.filter(user=self.request.user)
