@@ -9,7 +9,13 @@
         <span class="category">Популярные</span>
     </div>
     {% for item in list_popular_posts %}
-        {% build_post item.id user %}
+        <div class="post-wrapper">
+            {% if user %}
+                {% build_post item.id user %}
+            {% else %}
+                {% build_post item.id %}
+            {% endif %}
+        </div>
     {% endfor %}
         {% if is_paginated %}
             <div class="paginator">

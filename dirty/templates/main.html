@@ -5,12 +5,16 @@
         {{ error }}
     {% endif %}
     <div class="popular-navbar">
-         <span class="category">Недавно созданные</span>
+         <span>Недавно созданные</span>
          <a class="category" href="{% url 'popular_view' %}">Популярные</a>
     </div>
+    <div class="post-wrapper">
     {% for item in list_popular_posts %}
+        <div class="post-wrapper">
         {% build_post item.id user %}
+        </div>
     {% endfor %}
+    </div>
         {% if is_paginated %}
             <div class="paginator">
                 {% if page_obj.has_previous  %}

@@ -1,0 +1,156 @@
+@navbar-color: #556E8C;
+@post-title-color: #4E729D;
+@bck-category-color: #556E8C;
+@content-padding-left: 50px;
+.underlined{
+  text-decoration: underline;
+}
+
+body{
+    font-family: Arial, Helvetica, sans-serif;
+}
+/*
+post.html
+*/
+.post{
+    position: relative;
+    padding-left: @content-padding-left;
+}
+.comment-form-wrapper{
+    display: none;
+}
+.post-wrapper{
+    margin-bottom: 50px;
+    position: relative;
+}
+.post-info{
+    color: #888;
+    padding-left: 50px;
+    font-size: 14px;
+}
+
+.like_click{
+    position: absolute;
+    height: 17px;
+    width: 17px;
+    font-size: 15px;
+    text-align: center;
+    font-family: Tahoma, sans-serif;
+}
+.vote_result{
+    position: absolute;
+    bottom: 15px;
+    text-align: center;
+    width: 14px;
+    height: 14px;
+    font-size: 13px;
+    font-family: Tahoma, sans-serif;
+}
+.like-plus{
+    bottom: 35px;
+}
+
+/*
+END;
+*/
+
+/* PAGINATOR STYLES */
+.paginator{
+    margin-top: 10px;
+}
+
+/* END */
+
+
+/* base.html header styles */
+header{
+    overflow: auto;
+    font-size: 13px;
+
+}
+
+.header-tagline{
+    float: left;
+    a{
+      color: @navbar-color;
+      &:visited{
+        color: @navbar-color;
+      }
+    }
+
+}
+
+.header-navbar{
+    overflow: auto;
+    a{
+      display: inline-block;
+      font-size: 13px;
+      margin-left: 50px;
+      margin-top: 14px;
+      color: #556e8c;
+      text-decoration: none;
+      cursor: pointer;
+      &:hover{
+        .underlined
+      }
+      &:first-child{
+        margin-left: 100px;
+      }
+    }
+}
+
+
+
+.d3logo{
+    float: left;
+    width: 57px;
+    height: 57px;
+    margin-right: 20px;
+}
+
+
+
+
+/*end header styles*/
+
+/*
+Content Styles
+*/
+.content-sidebar{
+    float:right;
+    margin-right: 100px;
+}
+
+.post-holder{
+    padding-left: 165px;
+}
+
+.post-header a{
+    text-decoration: none;
+    color: @post-title-color;
+}
+
+.navbar-mixin(@underline; @color; @background-clr: none){
+  color: @color;
+  background: @background-clr;
+  text-transform: uppercase;
+  text-decoration: @underline;
+  padding: 1px 4px;
+  font-size: 13px;
+  border-radius: 2px;
+  font-family: Verdana, Arial, sans-serif;
+  line-height: 1.5;
+}
+
+/*POST STYLES*/
+
+.popular-navbar{
+  padding-left: @content-padding-left;
+  .category{
+    .navbar-mixin(underline; @bck-category-color);
+  }
+  span{
+    .navbar-mixin(none; #FFF; @bck-category-color);
+  }
+}
+

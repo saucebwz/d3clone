@@ -32,7 +32,7 @@ def com_tree(comment):
 
 
 @register.inclusion_tag('build_post.html')
-def build_post(post_id, user):
+def build_post(post_id, user=None):
     _p = get_object_or_404(Post, pk=post_id)
     return {'item': _p, 'user': user}
 

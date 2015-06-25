@@ -3,13 +3,13 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.contrib.auth.models import UserManager
-from django.db.models import Count
+from django.db.models import Count, Sum
 from django.shortcuts import get_object_or_404
 
 class PopularPostManager(models.Manager):
     def get_queryset(self):
         query_set = super(PopularPostManager, self).get_queryset()
-        posts = Post.objects.annotate(num=Count('likes__like')).order_by('-num')
+        posts = Post.objects.annotate(num=Sum('likes__like')).order_by('-num')
         return posts
 
 class Post(models.Model):

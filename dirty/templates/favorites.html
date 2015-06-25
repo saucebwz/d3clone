@@ -1,8 +1,12 @@
 {% extends "base.html" %}
 {% load tags %}
 {% block content %}
+    {% if list_of_favorites %}
     {% for item in list_of_favorites %}
         {% build_post item.post.id user %}
     {% endfor %}
+    {% else %}
+        <p class="error-msg">Здесь ничего нет.</p>
+    {% endif %}
 {% endblock %}
 

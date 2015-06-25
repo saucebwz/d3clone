@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'dirty',
     'registration',
+    'static_precompiler',
 
 )
 
@@ -88,27 +89,51 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_PRECOMPILER_ROOT = '/static/css/'
 
-TEMPLATE_DIRS = (
-    os.path.join(BASE_DIR,  'templates'),
-    os.path.join(BASE_DIR, 'dirty/templates'),
-    os.path.join(BASE_DIR, 'dirty/templatetags')
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    # other finders..
+    'static_precompiler.finders.StaticPrecompilerFinder',
 )
+
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [ os.path.join(BASE_DIR,  'templates'),
+                 os.path.join(BASE_DIR, 'dirty/templates'),
+                 os.path.join(BASE_DIR, 'dirty/templatetags')
+            ],
+
+        'OPTIONS': {
+            'context_processors': [
+                "django.contrib.auth.context_processors.auth",
+                "django.core.context_processors.debug",
+                "django.core.context_processors.i18n",
+                "django.core.context_processors.media",
+                "django.core.context_processors.static",
+                "django.core.context_processors.tz",
+                'django.contrib.messages.context_processors.messages',
+                'dirty.custom_context_processors.username',
+            ],
+        },
+    },
+]
+
 
 SITE_URL = '127.0.0.1:8000'
 
-TEMPLATE_CONTEXT_PROCESSORS = ("django.contrib.auth.context_processors.auth",
-                               "django.core.context_processors.debug",
-                               "django.core.context_processors.i18n",
-                               "django.core.context_processors.media",
-                               "django.core.context_processors.static",
-                               "django.core.context_processors.tz",
-                               'django.contrib.messages.context_processors.messages',
-                               'dirty.custom_context_processors.username',
-)
 
 AUTH_PROFILE_MODULE = 'dirty.Profile'
 
+# TEMPLATE_DIRS = (
+#     os.path.join(BASE_DIR,  'templates'),
+#                 os.path.join(BASE_DIR, 'dirty/templates'),
+#                 os.path.join(BASE_DIR, 'dirty/templatetags')
+# )
 
 REGISTRATION_OPEN = True
 ACCOUNT_ACTIVATION_DAYS = 7

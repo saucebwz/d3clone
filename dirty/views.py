@@ -31,7 +31,7 @@ class MainView(generic.ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        return Post.objects.all()
+        return Post.objects.all().order_by('-created_on')
 
 class PopularView(generic.ListView):
     model = Post

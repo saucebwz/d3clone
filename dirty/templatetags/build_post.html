@@ -6,16 +6,18 @@
             <div class="post-body">
                 <p>{{ item.description|truncatechars:400 }}</p>
             </div>
-            <p id="likes_post{{ item.id }}">{% get_likes_count item.id %}</p>
             {% csrf_token %}
-            <div class="rate_block{{ item.id }}">
-                <input type="submit" value="+" name="submit" class="like_click" id="{{ item.id }}"/>
-                <input type="submit" value="-" name="submit" class="like_click" id="{{ item.id }}"/>
-            </div>
+        </div>
+        <div class="rate_block{{ item.id }}">
+                <a data-value="+" class="like_click like-plus" id="{{ item.id }}">+</a>
+                <strong class="vote_result">{% get_likes_count item.id %}</strong>
+                <a data-value="-" class="like_click like-minus" id="{{ item.id }}">-</a>
         </div>
         <div class="post-info">
             {% get_full_info_about_post item.pk %}
+            {% if user %}
             <span class="add-favorite" data-postid ="{{ item.id }}">
                 {% is_favourite item.pk user%}
             </span>
+            {% endif %}
         </div>
