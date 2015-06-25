@@ -3,7 +3,7 @@ from django.views import generic
 from django.views import generic
 from django.shortcuts import render_to_response
 from django.views.generic import View
-from dirty.models import Post, Like, DirtyUser, Comment, Karma, KarmaWVL, Favorites
+from dirty.models import Post, Like, DirtyUser, Comment, Karma, KarmaWVL, Favorites, CommentRead
 from dirty.forms import PostForm
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.contrib.auth import authenticate, login, logout
@@ -204,9 +204,16 @@ class ProfileEdit(LoginRequiredMixin, generic.FormView):
 class PostView(View):
 
     def get(self, request, post_id):
+
         post = get_object_or_404(Post, pk=post_id)
         form = CommentForm()
         comments = post.comment_set.all()
+        if request.user.is_authenticated():
+            for comment in comments:
+                _read_comments, created = CommentRead.objects.get_or_create(user=request.user, comment=comment, post=post)
+                if created:
+                    _read_comments.save()
+
         return render_to_response('post.html', {'post': post, 'form': form, 'comments': comments}, context_instance=RequestContext(request))
 
     def post(self, request, post_id):

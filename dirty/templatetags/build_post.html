@@ -14,7 +14,7 @@
                 <a data-value="-" class="like_click like-minus" id="{{ item.id }}">-</a>
         </div>
         <div class="post-info">
-            {% get_full_info_about_post item.pk %}
+            {% get_full_info_about_post item.pk user %}
             {% if user %}
             <span class="add-favorite" data-postid ="{{ item.id }}">
                 {% is_favourite item.pk user%}

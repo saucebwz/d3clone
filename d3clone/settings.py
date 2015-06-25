@@ -103,10 +103,10 @@ STATICFILES_FINDERS = (
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [ os.path.join(BASE_DIR,  'templates'),
+        'DIRS': [os.path.join(BASE_DIR,  'templates'),
                  os.path.join(BASE_DIR, 'dirty/templates'),
                  os.path.join(BASE_DIR, 'dirty/templatetags')
-            ],
+                ],
 
         'OPTIONS': {
             'context_processors': [

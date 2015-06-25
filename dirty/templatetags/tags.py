@@ -1,5 +1,5 @@
 from django import template
-from dirty.models import Comment, Post, Like, Favorites
+from dirty.models import Comment, Post, Like, Favorites, CommentRead
 from django.shortcuts import get_object_or_404
 from django.core.urlresolvers import reverse
 from django.db.models import Sum
@@ -25,6 +25,18 @@ def is_favourite(post_id, user):
         return "***"
 
 
+@register.simple_tag
+def is_newcomments(post_id, user):
+
+    _read_comments = CommentRead.objects.filter(post__pk=post_id, user=user).count()
+    all_comments = Comment.objects.filter(post__pk=post_id).count()
+    if _read_comments < all_comments:
+        return True
+    else:
+        return False
+
+
+
 @register.inclusion_tag('comment_tree.html')
 def com_tree(comment):
     children = Comment.objects.filter(parent=comment)
@@ -47,8 +59,14 @@ def get_comments_count(post_id):
     return string
 
 @register.simple_tag
-def get_full_info_about_post(post_id):
+def get_full_info_about_post(post_id, user):
+        new_comments = is_newcomments(post_id, user)
+        if new_comments:
+            pre, suf = "<b>", "</b>"
+        else:
+            pre, suf = "", ""
+
         count = get_comments_count(post_id)
         post = get_object_or_404(Post, pk=post_id)
         url = reverse("profile_view", args=(post.user.username, ))
-        return "Написал <a href={0}>{1}</a> в {2}, {3}".format(url, post.user.username, post.created_on, count)
+        return "Написал <a href={0}>{1}</a> в {2}, {4}{3}{5}".format(url, post.user.username, post.created_on, count, pre, suf)

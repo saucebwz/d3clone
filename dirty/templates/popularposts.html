@@ -4,9 +4,9 @@
     {% if error %}
         {{ error }}
     {% endif %}
-    <div class="category-navbar">
+    <div class="popular-navbar">
         <a class="category" href="{% url 'main_view' %}">Недавно созданные</a>
-        <span class="category">Популярные</span>
+        <span>Популярные</span>
     </div>
     {% for item in list_popular_posts %}
         <div class="post-wrapper">

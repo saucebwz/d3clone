@@ -4,7 +4,7 @@
     <article class="post-wrapper">
         <p>{{ post.title }}</p>
         <p>{{ post.description }}</p>
-        <p class="post-info">{% get_full_info_about_post post.id %}</p>
+        <p class="post-info">{% get_full_info_about_post post.id user%}</p>
     </article>
     <hr />
     <div class="comments-wrapper">

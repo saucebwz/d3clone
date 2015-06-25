@@ -22,7 +22,13 @@ class Post(models.Model):
     def __str__(self):
         return self.title
 
+class CommentRead(models.Model):
+    user = models.ForeignKey('DirtyUser')
+    post = models.ForeignKey('Post')
+    comment = models.ForeignKey('Comment')
 
+    def __str__(self):
+        return self.comment.head
 
 
 
